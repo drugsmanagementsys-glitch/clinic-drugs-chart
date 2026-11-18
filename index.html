@@ -36,19 +36,23 @@
       min-height: 100vh;
       padding: 28px 18px;
       position: relative;
-      background: linear-gradient(-45deg, #e0f2fe, #ccfbf1, #f0fdfa, #dbeafe, #ecfdf5);
-      background-size: 350% 350%;
-      animation: medicalPulseBg 16s ease infinite;
+      overflow-x: hidden;
+      background: linear-gradient(-45deg, #d1fae5, #e0f2fe, #ccfbf1, #dbeafe, #f0fdfa);
+      background-size: 400% 400%;
+      animation: medicalPulseBg 14s ease infinite;
     }
 
+    /* Medical cross grid overlay */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
       pointer-events: none;
       z-index: 0;
-      opacity: 0.45;
-      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 22h4v6h6v4h-6v6h-4v-6h-6v-4h6v-6z' fill='%230d9488' fill-opacity='0.12'/%3E%3C/svg%3E");
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(13, 148, 136, 0.14) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(2, 132, 199, 0.14) 0%, transparent 45%),
+        url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 22h4v8h8v4h-8v8h-4v-8h-8v-4h8v-8z' fill='%230d9488' fill-opacity='0.14'/%3E%3C/svg%3E");
     }
 
     @keyframes medicalPulseBg {
@@ -65,25 +69,54 @@
     }
 
     header {
-      background: rgba(255, 255, 255, 0.86);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(153, 246, 228, 0.7);
+      position: relative;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(153, 246, 228, 0.8);
       border-radius: 18px;
-      padding: 22px 26px;
+      padding: 24px 26px 22px;
       margin-bottom: 18px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
       gap: 14px;
-      box-shadow: 0 10px 30px -10px rgba(13, 148, 136, 0.14);
-      transition: all 0.3s ease;
+      box-shadow: 0 12px 32px -10px rgba(13, 148, 136, 0.16);
+      transition: transform 0.28s ease, box-shadow 0.28s ease, background 0.28s ease;
     }
 
     header:hover {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(240, 253, 250, 0.96));
-      box-shadow: 0 16px 36px -10px rgba(13, 148, 136, 0.22);
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 18px 38px -10px rgba(13, 148, 136, 0.24);
+    }
+
+    /* Tiny blinking random color developer credit in top-right corner */
+    .dev-credit {
+      position: absolute;
+      top: 9px;
+      right: 16px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      animation: colorBlink 2.8s infinite ease-in-out;
+      user-select: none;
+    }
+
+    @keyframes colorBlink {
+      0% { color: #0d9488; opacity: 1; }
+      20% { color: #0284c7; opacity: 0.55; }
+      40% { color: #9333ea; opacity: 1; }
+      60% { color: #db2777; opacity: 0.6; }
+      80% { color: #ca8a04; opacity: 1; }
+      100% { color: #059669; opacity: 0.65; }
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
     .title-row {
@@ -93,17 +126,17 @@
     }
 
     .med-badge {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
       background: linear-gradient(135deg, #0d9488, #0284c7);
       color: #fff;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 1.25rem;
-      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+      font-size: 1.3rem;
+      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.32);
     }
 
     header h1 {
@@ -116,10 +149,10 @@
     }
 
     .meta-stack {
-      margin-top: 8px;
+      margin-top: 4px;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 4px;
     }
 
     .meta {
@@ -128,6 +161,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      flex-wrap: wrap;
     }
 
     .manual-date-pill {
@@ -137,7 +171,7 @@
       background: #f0fdfa;
       border: 1px solid #99f6e4;
       color: #0f766e;
-      padding: 3px 10px;
+      padding: 3px 11px;
       border-radius: 999px;
       font-weight: 700;
       font-size: 0.82rem;
@@ -158,6 +192,10 @@
       100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
+    .header-right {
+      margin-top: 6px;
+    }
+
     .btn-refresh {
       background: linear-gradient(135deg, #0d9488, #0284c7);
       background-size: 200% auto;
@@ -169,7 +207,7 @@
       cursor: pointer;
       font-size: 0.9rem;
       box-shadow: 0 4px 14px rgba(13, 148, 136, 0.28);
-      transition: all 0.3s ease;
+      transition: all 0.25s ease;
     }
 
     .btn-refresh:hover {
@@ -178,10 +216,14 @@
       box-shadow: 0 8px 20px rgba(2, 132, 199, 0.38);
     }
 
+    .btn-refresh:active {
+      transform: translateY(0);
+    }
+
     .controls {
       background: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(153, 246, 228, 0.7);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(153, 246, 228, 0.8);
       border-radius: 18px;
       padding: 14px 16px;
       margin-bottom: 18px;
@@ -189,7 +231,7 @@
       flex-wrap: wrap;
       gap: 12px;
       align-items: center;
-      box-shadow: 0 10px 25px -10px rgba(13, 148, 136, 0.12);
+      box-shadow: 0 10px 25px -10px rgba(13, 148, 136, 0.14);
     }
 
     .search-wrapper {
@@ -218,7 +260,13 @@
       font-family: inherit;
       color: var(--text);
       background: #f8fafc;
-      transition: all 0.28s ease;
+      transition: all 0.25s ease;
+    }
+
+    .search-wrapper input:hover,
+    .controls select:hover {
+      border-color: #5eead4;
+      background: #ffffff;
     }
 
     .search-wrapper input:focus {
@@ -242,6 +290,7 @@
       display: none;
       align-items: center;
       justify-content: center;
+      transition: all 0.2s ease;
     }
 
     .clear-btn:hover { background: #0d9488; color: #ffffff; }
@@ -256,6 +305,7 @@
       color: var(--text);
       background: #f8fafc;
       cursor: pointer;
+      transition: all 0.25s ease;
     }
 
     .controls select:focus {
@@ -266,12 +316,12 @@
     }
 
     .table-wrap {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(153, 246, 228, 0.7);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(153, 246, 228, 0.8);
       border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 14px 34px -12px rgba(13, 148, 136, 0.15);
+      box-shadow: 0 14px 34px -12px rgba(13, 148, 136, 0.16);
     }
 
     table {
@@ -289,24 +339,68 @@
       font-size: 0.78rem;
       letter-spacing: 0.06em;
       padding: 15px 18px;
-      border-bottom: 1px solid rgba(153, 246, 228, 0.8);
+      border-bottom: 1px solid rgba(153, 246, 228, 0.85);
+    }
+
+    tbody tr {
+      cursor: default;
+      transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     td {
       padding: 14px 18px;
-      border-bottom: 1px solid rgba(226, 232, 240, 0.65);
-      transition: background 0.25s ease;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.75);
+      background-color: transparent;
+      transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
     }
 
-    tbody tr.row-in:hover { background: linear-gradient(90deg, rgba(209, 250, 229, 0.75), rgba(240, 253, 250, 0.95)); }
-    tbody tr.row-low:hover { background: linear-gradient(90deg, rgba(254, 249, 195, 0.8), rgba(255, 251, 235, 0.95)); }
-    tbody tr.row-out:hover { background: linear-gradient(90deg, rgba(254, 226, 226, 0.75), rgba(255, 241, 242, 0.95)); }
-    tbody tr.row-na:hover { background: linear-gradient(90deg, rgba(224, 242, 254, 0.75), rgba(248, 250, 252, 0.95)); }
+    /* Interactive Row Hover Effects */
+    tbody tr.row-in:hover,
+    tbody tr.row-in:hover td {
+      background-color: #dcfce7;
+    }
 
-    .drug-name { font-weight: 600; transition: padding 0.22s ease; }
-    tbody tr:hover .drug-name { color: #0f766e; padding-left: 6px; }
+    tbody tr.row-low:hover,
+    tbody tr.row-low:hover td {
+      background-color: #fef9c3;
+    }
 
-    .letter-cell { width: 60px; text-align: center; }
+    tbody tr.row-out:hover,
+    tbody tr.row-out:hover td {
+      background-color: #fee2e2;
+    }
+
+    tbody tr.row-na:hover,
+    tbody tr.row-na:hover td {
+      background-color: #e0f2fe;
+    }
+
+    tbody tr:hover {
+      box-shadow: inset 4px 0 0 var(--primary);
+    }
+
+    tbody tr.row-low:hover {
+      box-shadow: inset 4px 0 0 #d97706;
+    }
+
+    tbody tr.row-out:hover {
+      box-shadow: inset 4px 0 0 #dc2626;
+    }
+
+    tbody tr.row-na:hover {
+      box-shadow: inset 4px 0 0 #0284c7;
+    }
+
+    .drug-name {
+      font-weight: 600;
+    }
+
+    tbody tr:hover .drug-name {
+      color: #0f172a;
+      transform: translateX(6px);
+    }
+
+    .letter-cell { width: 64px; text-align: center; }
 
     .letter-pill {
       display: inline-flex;
@@ -319,6 +413,11 @@
       color: #0f766e;
       font-weight: 800;
       font-size: 0.85rem;
+      transition: transform 0.2s ease;
+    }
+
+    tbody tr:hover .letter-pill {
+      transform: scale(1.1);
     }
 
     .badge {
@@ -331,6 +430,12 @@
       font-weight: 700;
       white-space: nowrap;
       border: 1px solid transparent;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    tbody tr:hover .badge {
+      transform: scale(1.04);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
     }
 
     .badge::before {
@@ -361,24 +466,25 @@
 <body>
   <div class="container">
     <header>
-      <div>
+      <span class="dev-credit">dev by DaNuka (D2F Systams)</span>
+      <div class="header-left">
         <div class="title-row">
           <span class="med-badge">+</span>
           <h1>OS Drugs Chart — Clinic - B</h1>
         </div>
         <div class="meta-stack">
           <div class="meta">
-            <span>📅 Sheet Manual Update Date (G3):</span>
-            <span class="manual-date-pill" id="sheetManualDate">Reading from cell G3...</span>
+            <span>📅 Last Manual Update:</span>
+            <span class="manual-date-pill" id="sheetManualDate">Loading date...</span>
           </div>
           <div class="meta">
             <span class="pulse-dot"></span>
             <span id="syncStatus">Current Live Sync: Checking Google Sheets...</span>
           </div>
-          <div class="meta" id="nextCheckStatus">Auto-check: Twice daily (08:00 AM & 08:00 PM)</div>
+          <div class="meta" id="nextCheckStatus">Auto-check: 8 AM – 1 PM hourly daily</div>
         </div>
       </div>
-      <div>
+      <div class="header-right">
         <button class="btn-refresh" onclick="fetchSheetData()">↻ Refresh Now</button>
       </div>
     </header>
@@ -426,7 +532,8 @@
   <script>
     const SHEET_ID = "1ixGbE0KxdY1Snv7Qc-znuhzni1__WbMkkUMHAwIcuNg";
     const GID = "418430439";
-    const CHECK_HOURS = [8, 20];
+    // Daily check hours: 8 AM, 9 AM, 10 AM, 11 AM, 12 PM, 1 PM
+    const CHECK_HOURS = [8, 9, 10, 11, 12, 13];
 
     let allDrugs = [];
 
@@ -473,13 +580,12 @@
         let currentLetter = "A";
         let manualDateVal = "";
 
-        // Specifically target Cell G3 (Row index 1 in rows, Column index 6 in cells)
+        // Read manual date from cell G3 (row index 1, col index 6)
         if (rows.length >= 2) {
-          const row3Cells = rows[1].c || []; // Row 3 is index 1 in rows array (Row 1 is headers, Row 2 is first drug, Row 3 is index 1)
-          manualDateVal = readCellText(row3Cells[6]); // Column G is index 6
+          const row3Cells = rows[1].c || [];
+          manualDateVal = readCellText(row3Cells[6]);
         }
 
-        // Fallback check if G3 is empty
         if (!manualDateVal && rows.length > 0) {
           for (let r = 0; r < Math.min(rows.length, 3); r++) {
             const cells = rows[r].c || [];
@@ -490,7 +596,7 @@
           }
         }
 
-        manualDateEl.textContent = manualDateVal || "Not set in cell G3";
+        manualDateEl.textContent = manualDateVal || "Not available";
 
         // Failsafe if Row 2 merged into column labels
         if (cols[1] && cols[1].label) {
@@ -607,7 +713,7 @@
       }).join("");
     }
 
-    function scheduleTwiceDailyCheck() {
+    function scheduleHourlyChecks() {
       const now = new Date();
       let nextRun = null;
 
@@ -625,16 +731,16 @@
 
       const msUntilNext = nextRun - now;
       document.getElementById("nextCheckStatus").textContent =
-        `Auto-check: Twice daily (08:00 AM & 08:00 PM) • Next check at ${nextRun.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        `Auto-check: 8 AM – 1 PM hourly • Next check at ${nextRun.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
 
       setTimeout(() => {
         fetchSheetData();
-        scheduleTwiceDailyCheck();
+        scheduleHourlyChecks();
       }, msUntilNext);
     }
 
     fetchSheetData();
-    scheduleTwiceDailyCheck();
+    scheduleHourlyChecks();
   </script>
 </body>
 </html>
