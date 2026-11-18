@@ -115,13 +115,32 @@
       -webkit-text-fill-color: transparent;
     }
 
+    .meta-stack {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
     .meta {
-      font-size: 0.84rem;
+      font-size: 0.85rem;
       color: var(--muted);
-      margin-top: 5px;
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .manual-date-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      color: #0f766e;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.82rem;
     }
 
     .pulse-dot {
@@ -347,8 +366,17 @@
           <span class="med-badge">+</span>
           <h1>OS Drugs Chart — Clinic - B</h1>
         </div>
-        <div class="meta"><span class="pulse-dot"></span><span id="syncStatus">Loading live inventory from Google Sheets...</span></div>
-        <div class="meta" id="nextCheckStatus">Auto-check schedule: Twice daily (08:00 AM & 08:00 PM)</div>
+        <div class="meta-stack">
+          <div class="meta">
+            <span>📅 Sheet Manual Update Date (G3):</span>
+            <span class="manual-date-pill" id="sheetManualDate">Reading from cell G3...</span>
+          </div>
+          <div class="meta">
+            <span class="pulse-dot"></span>
+            <span id="syncStatus">Current Live Sync: Checking Google Sheets...</span>
+          </div>
+          <div class="meta" id="nextCheckStatus">Auto-check: Twice daily (08:00 AM & 08:00 PM)</div>
+        </div>
       </div>
       <div>
         <button class="btn-refresh" onclick="fetchSheetData()">↻ Refresh Now</button>
@@ -402,10 +430,30 @@
 
     let allDrugs = [];
 
+    function readCellText(cell) {
+      if (!cell) return "";
+      if (cell.f !== undefined && cell.f !== null && String(cell.f).trim() !== "") {
+        return String(cell.f).trim();
+      }
+      if (cell.v !== undefined && cell.v !== null) {
+        const val = String(cell.v).trim();
+        const dateMatch = val.match(/^Date\((\d+),(\d+),(\d+)/);
+        if (dateMatch) {
+          const y = Number(dateMatch[1]);
+          const m = Number(dateMatch[2]);
+          const d = Number(dateMatch[3]);
+          return new Date(y, m, d).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+        return val;
+      }
+      return "";
+    }
+
     function fetchSheetData() {
       const syncEl = document.getElementById("syncStatus");
+      const manualDateEl = document.getElementById("sheetManualDate");
       const errEl = document.getElementById("errorBanner");
-      syncEl.textContent = "Checking Google Sheet for updates...";
+      syncEl.textContent = "Current Live Sync: Checking Google Sheet...";
       errEl.style.display = "none";
 
       const oldScript = document.getElementById("gsheet-jsonp");
@@ -423,8 +471,28 @@
         const rows = response.table.rows || [];
         const parsed = [];
         let currentLetter = "A";
+        let manualDateVal = "";
 
-        // Failsafe: if Google Sheets merged Row 2 into column labels, recover it
+        // Specifically target Cell G3 (Row index 1 in rows, Column index 6 in cells)
+        if (rows.length >= 2) {
+          const row3Cells = rows[1].c || []; // Row 3 is index 1 in rows array (Row 1 is headers, Row 2 is first drug, Row 3 is index 1)
+          manualDateVal = readCellText(row3Cells[6]); // Column G is index 6
+        }
+
+        // Fallback check if G3 is empty
+        if (!manualDateVal && rows.length > 0) {
+          for (let r = 0; r < Math.min(rows.length, 3); r++) {
+            const cells = rows[r].c || [];
+            if (cells[6]) {
+              manualDateVal = readCellText(cells[6]);
+              if (manualDateVal) break;
+            }
+          }
+        }
+
+        manualDateEl.textContent = manualDateVal || "Not set in cell G3";
+
+        // Failsafe if Row 2 merged into column labels
         if (cols[1] && cols[1].label) {
           const rawLabelB = String(cols[1].label).trim();
           const cleanedName = rawLabelB.replace(/^Drug Name\s*/i, "").trim();
@@ -441,9 +509,9 @@
 
         rows.forEach((r) => {
           const cells = r.c || [];
-          const colA = cells[0] && cells[0].v !== null ? String(cells[0].v).trim() : "";
-          const drugName = cells[1] && cells[1].v !== null ? String(cells[1].v).trim() : "";
-          const rawStatus = cells[2] && cells[2].v !== null ? String(cells[2].v).trim() : "";
+          const colA = readCellText(cells[0]);
+          const drugName = readCellText(cells[1]);
+          const rawStatus = readCellText(cells[2]);
 
           if (colA) currentLetter = colA.toUpperCase();
           if (!drugName || drugName.toLowerCase() === "drug name") return;
@@ -463,12 +531,11 @@
         renderTable();
 
         const now = new Date();
-        syncEl.textContent = `Synced: ${now.toLocaleDateString()} at ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        syncEl.textContent = `Current Live Sync: ${now.toLocaleDateString()} at ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
       };
 
       const script = document.createElement("script");
       script.id = "gsheet-jsonp";
-      // headers=1 forces Google Sheets to use only Row 1 as header and include Row 2 (1 Alpha...) in data
       script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${GID}&headers=1&tqx=responseHandler:handleSheetResponse&_=${Date.now()}`;
       script.onerror = function() {
         errEl.style.display = "block";
